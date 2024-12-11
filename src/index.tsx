@@ -1,9 +1,13 @@
 import { Hono } from 'hono'
+import { renderer } from './renderer'
+import { TopPage } from './page/top'
 
 const app = new Hono()
 
+app.use(renderer)
+
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
+  return c.render(<TopPage />)
 })
 
 app.get('/hello/:name', (c) => {
