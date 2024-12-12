@@ -4,7 +4,7 @@ import { renderer } from './renderer'
 import { TopPage } from './page/top'
 import { useCredentials } from './hooks/useCredentials'
 import { usePayJpCardToken } from './hooks/usePayJpCardToken'
-import { createCustomer } from './hooks/fetchPayJp'
+import { createCustomer, createSubscription } from './hooks/fetchPayJp'
 
 const app = new Hono()
 
@@ -25,12 +25,17 @@ app.post('/payment', async (c) => {
     return tokenError
   }
 
-  const { customer, error: fetchError } = await createCustomer(c, credentials, token)
-  if (fetchError) {
-    return fetchError
+  const { customer, error: customerFetchError } = await createCustomer(c, credentials, token)
+  if (customerFetchError) {
+    return customerFetchError
   }
 
-  return c.render(`Customer Created! ${JSON.stringify(customer.id)}`)
+  const { subscription, error: subscriptionFetchError } = await createSubscription(c, credentials, customer.id)
+  if (subscriptionFetchError) {
+    return subscriptionFetchError
+  }
+
+  return c.render(`Subscription Created! ${JSON.stringify(subscription.id)}`)
 })
 
 export default app
