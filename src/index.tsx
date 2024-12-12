@@ -1,9 +1,10 @@
 import { Hono } from 'hono'
-import { env } from 'hono/adapter'
 
 import { renderer } from './renderer'
 import { TopPage } from './page/top'
-import { CustomerResponse, ErrorResponse } from './types/payjp'
+import { useCredentials } from './hooks/useCredentials'
+import { usePayJpCardToken } from './hooks/usePayJpCardToken'
+import { createCustomer } from './hooks/fetchPayJp'
 
 const app = new Hono()
 
@@ -14,46 +15,22 @@ app.get('/', (c) => {
 })
 
 app.post('/payment', async (c) => {
-  const body = await c.req.parseBody()
-  const token = body["payjp-token"] // PAY.JPから提供される JS でできるUIのPOST時のデフォルト値
-  if (!token) {
-    return c.render("Token not found")
+  const { credentials, error: credentialError } = useCredentials(c)
+  if (credentialError) {
+    return credentialError
   }
 
-  if (typeof token !== "string") {
-    return c.render("Token is not string")
+  const { token, error: tokenError } = await usePayJpCardToken(c)
+  if (tokenError) {
+    return tokenError
   }
 
-  const { PAYJP_SECRET_KEY } = env<{ PAYJP_SECRET_KEY: string }>(c)
-  if (PAYJP_SECRET_KEY === "") {
-    return c.render("PAYJP_SECRET_KEY is not found")
+  const { customer, error: fetchError } = await createCustomer(c, credentials, token)
+  if (fetchError) {
+    return fetchError
   }
 
-  const encodedCredentials = Buffer.from(`${PAYJP_SECRET_KEY}:`).toString("base64")
-
-  const params = new URLSearchParams({
-    card: token,
-  });
-  const formData = params.toString(); 
-
-  const customer = await fetch("https://api.pay.jp/v1/customers", {
-    method: "POST",
-    
-    headers: {
-      Authorization: `Basic ${encodedCredentials}:`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: formData,
-  })
-  const customerJson = await customer.json<CustomerResponse | ErrorResponse>()
-  
-  console.log(customerJson)
-
-  if ("error" in customerJson) {
-    return c.render(`Error: ${customerJson.error.message}`)
-  }
-
-  return c.render(`Customer Created! ${JSON.stringify(customerJson.id)}`)
+  return c.render(`Customer Created! ${JSON.stringify(customer.id)}`)
 })
 
 export default app
