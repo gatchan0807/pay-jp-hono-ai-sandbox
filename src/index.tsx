@@ -48,7 +48,7 @@ app.get('/ai', (c) => {
       {import.meta.env.PROD ? (
         <script type="module" src="/static/client.js"></script>
       ) : (
-        <script type="module" src="/src/clients/container.tsx"></script>
+        <script type="module" src="/src/clients/page/ai.tsx"></script>
       )}
     </head>
     <body>
