@@ -38,4 +38,24 @@ app.post('/payment', async (c) => {
   return c.render(`Subscription Created! ${JSON.stringify(subscription.id)}`)
 })
 
+app.get('/ai', (c) => {
+  return c.html(
+    <html>
+    <head>
+      <meta charSet="utf-8" />
+      <meta content="width=device-width, initial-scale=1" name="viewport" />
+      <script src="https://cdn.tailwindcss.com"></script>
+      {import.meta.env.PROD ? (
+        <script type="module" src="/static/client.js"></script>
+      ) : (
+        <script type="module" src="/src/clients/container.tsx"></script>
+      )}
+    </head>
+    <body>
+      <div id="ai-root"></div>
+    </body>
+  </html>
+  )
+})
+
 export default app
