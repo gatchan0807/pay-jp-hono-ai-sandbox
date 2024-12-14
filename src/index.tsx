@@ -52,7 +52,7 @@ app.get('/ai', (c) => {
       )}
     </head>
     <body>
-      <div id="ai-root"></div>
+      <div id="client-container"></div>
     </body>
   </html>
   )
