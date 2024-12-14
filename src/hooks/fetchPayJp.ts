@@ -24,13 +24,16 @@ export async function createCustomer(
 
     console.log(customer)
 
-
     if ("error" in customer && customer.error.type === "client_error") {
         return { customer: null, error: ClientError(ctx, { message: customer.error.message, code: customer.error.code }) }
     }
     
     if ("error" in customer && customer.error.type === "server_error") {
         return { customer: null, error: ServerError(ctx, { message: customer.error.message, code: customer.error.code }) }
+    }
+
+    if ("error" in customer && customer.error.type === "auth_error") {
+        return { customer: null, error: ServerError(ctx, { message: "Internal Server Error", code: 500 }) }
     }
 
     if ("error" in customer) {
