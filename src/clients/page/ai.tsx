@@ -1,4 +1,4 @@
-import { render } from 'hono/jsx/dom'
+import { FC, render } from 'hono/jsx/dom'
 import { Container } from '../../components/box';
 import { Footer } from '../../components/footer';
 import { Title } from '../../components/text';
