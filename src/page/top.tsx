@@ -56,13 +56,20 @@ function PayJpSubscriptionForm() {
       <AttentionBox type="info">
         <>PAY.JP API経由で顧客情報とサブスク登録、テストカードの登録までやってみよう！</>
       </AttentionBox>
-      <p>
-        PAY.JPで支払いを行う（テストカードしか使えません）
-        <p>テストカード番号：4242 4242 4242 4242</p>
-        <form action="/payment" method="post">
-          <script src="https://checkout.pay.jp" class="payjp-button" data-key="pk_test_52f40932ba5a099b40ed9974"></script>
-        </form>
-      </p>
+      <div>
+        <div class="w-full p-4 bg-cyan-50">
+          <h2 class="text-lg font-bold">PAY.JPで支払いを行う</h2>
+          <span class="font-bold">※ <a href="https://pay.jp/docs/testcard" target="_blank" rel="noreferrer" class="underline text-cyan-700">テストカード</a>のみ利用可能です</span>
+          <p>例）テスト用カード番号：4242 4242 4242 4242</p>
+
+          <div class="pt-4 w-full flex justify-center">
+
+            <form action="/payment" method="post">
+              <script src="https://checkout.pay.jp" class="payjp-button" data-key="pk_test_52f40932ba5a099b40ed9974" data-text="サブスクリプション登録をする"></script>
+            </form>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
