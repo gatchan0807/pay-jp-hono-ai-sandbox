@@ -101,3 +101,26 @@ export async function getSubscription(
 
     return { subscription, error: null }
 }
+
+export async function cancelSubscription(
+    credentials: string,
+    subscriptionId: string
+) {
+    const result = await fetch(`https://api.pay.jp/v1/subscriptions/${subscriptionId}/cancel`, {
+        method: "POST",
+        headers: {
+            Authorization: `Basic ${credentials}:`,
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    })
+
+    const subscription = await result.json<SubscriptionResponse | ErrorResponse>()
+
+    console.log(subscription)
+
+    if ("error" in subscription && subscription.error.type === "client_error") {
+        return { subscription: null, error: { message: subscription.error.message, code: subscription.error.code } }
+    }
+
+    return { subscription, error: null }
+}

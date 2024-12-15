@@ -44,7 +44,7 @@ function Plan({ plan }: { plan: PlanResponse }) {
       </ul>
 
       <div class="w-full flex justify-end">
-        <button class="mr-4 mt-4 px-4 py-2 bg-red-100 text-red-800 rounded">解約する</button>
+        <a href="/payment/cancel" class="mr-4 mt-4 px-4 py-2 bg-red-100 text-red-800 rounded">解約する</a>
       </div>
     </div>
   )
