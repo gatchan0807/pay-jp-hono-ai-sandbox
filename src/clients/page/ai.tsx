@@ -6,17 +6,18 @@ import { useLanguageModel } from '../hooks/useLanguageModels';
 import { useLanguageModelStatus } from '../hooks/useLanguageModelStatus';
 
 export function ClientAiPage() {
-  const languageModel = useLanguageModel();
-  const languageModelStatus = useLanguageModelStatus({ languageModel });
+    const languageModel = useLanguageModel();
+    const languageModelStatus = useLanguageModelStatus({ languageModel });
 
-  return (
-    <Container>
-      <Title text="Hello world from Client side rendering!" />
-      <p>Can I use on-chrome LLM?: {JSON.stringify(languageModelStatus)}</p>
+    return (
+        <Container>
+            <Title text="[機能限定版] 無料AI機能お試し" />
+            <p>Can I use on-chrome LLM?: {JSON.stringify(languageModelStatus)}</p>
 
-      <Footer />
-    </Container>
-  )
+
+            <Footer />
+        </Container>
+    )
 }
 
 const root = document.getElementById('client-ai-page')!

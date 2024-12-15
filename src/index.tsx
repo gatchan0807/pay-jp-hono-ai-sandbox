@@ -38,7 +38,7 @@ app.post('/payment', async (c) => {
   return c.render(`Subscription Created! ${JSON.stringify(subscription.id)}`)
 })
 
-app.get('/ai', (c) => {
+app.get('/ai/limited', (c) => {
   return c.html(
     <html>
     <head>

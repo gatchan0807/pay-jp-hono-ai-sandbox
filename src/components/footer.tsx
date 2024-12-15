@@ -6,7 +6,7 @@ export function Footer() {
                     <a href="/" class="underline text-teal-600 hover:text-teal-500">TOP</a>
                 </li>
                 <li>
-                    <a href="/ai" class="underline text-teal-600 hover:text-teal-500">AI</a>
+                    <a href="/ai/limited" class="underline text-teal-600 hover:text-teal-500">AI</a>
                 </li>
             </ul>
         </footer>
