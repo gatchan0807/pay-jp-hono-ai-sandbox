@@ -1,13 +1,17 @@
 import { FC, Suspense } from "hono/jsx";
 import { Footer } from "../components/footer";
 import { Title } from "../components/text";
-import { Container } from "../components/box";
+import { AttentionBox, Container } from "../components/box";
 
 export const TopPage: FC = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Container>
-        <Title text="Hello World from Cloudflare Pages!" />
+        <Title text="PAY.JPを使ったサブスク登録ページ" />
+
+        <AttentionBox type="info">
+          <>PAY.JP API経由で顧客情報とサブスク登録、テストカードの登録までやってみよう！</>
+        </AttentionBox>
 
         <p>
           PAY.JPで支払いを行う（テストカードしか使えません）
