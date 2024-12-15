@@ -5,6 +5,9 @@ import { TopPage } from './page/top'
 import { useCredentials } from './hooks/useCredentials'
 import { usePayJpCardToken } from './hooks/usePayJpCardToken'
 import { createCustomer, createSubscription } from './hooks/fetchPayJp'
+import { ConfirmedPage } from './page/subscription/confirmed'
+import { setSignedCookie } from 'hono/cookie'
+import { env } from 'hono/adapter'
 
 const app = new Hono()
 
@@ -46,7 +49,7 @@ app.get('/ai/limited', (c) => {
       <meta content="width=device-width, initial-scale=1" name="viewport" />
       <script src="https://cdn.tailwindcss.com"></script>
       {import.meta.env.PROD ? (
-        <script type="module" src="/static/client.js"></script>
+        <script type="module" src="/static/ai/limited.js"></script>
       ) : (
         <script type="module" src="/src/clients/page/ai.tsx"></script>
       )}
