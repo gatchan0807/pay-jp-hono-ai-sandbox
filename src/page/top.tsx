@@ -19,10 +19,6 @@ export async function TopPage({ cookie, credentials }: { cookie: Cookie, credent
       <Container>
         <Title text="PAY.JPを使ったサブスク登録ページ" />
 
-        <AttentionBox type="info">
-          <>PAY.JP API経由で顧客情報とサブスク登録、テストカードの登録までやってみよう！</>
-        </AttentionBox>
-
         {subscriptionStatus === 'active' && plan && (
           <Plan plan={plan} />
         )}
@@ -56,12 +52,17 @@ function Plan({ plan }: { plan: PlanResponse }) {
 
 function PayJpSubscriptionForm() {
   return (
-    <p>
-      PAY.JPで支払いを行う（テストカードしか使えません）
-      <p>テストカード番号：4242 4242 4242 4242</p>
-      <form action="/payment" method="post">
-        <script src="https://checkout.pay.jp" class="payjp-button" data-key="pk_test_52f40932ba5a099b40ed9974"></script>
-      </form>
-    </p>
+    <>
+      <AttentionBox type="info">
+        <>PAY.JP API経由で顧客情報とサブスク登録、テストカードの登録までやってみよう！</>
+      </AttentionBox>
+      <p>
+        PAY.JPで支払いを行う（テストカードしか使えません）
+        <p>テストカード番号：4242 4242 4242 4242</p>
+        <form action="/payment" method="post">
+          <script src="https://checkout.pay.jp" class="payjp-button" data-key="pk_test_52f40932ba5a099b40ed9974"></script>
+        </form>
+      </p>
+    </>
   )
 }
