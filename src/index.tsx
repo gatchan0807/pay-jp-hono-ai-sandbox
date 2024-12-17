@@ -11,6 +11,8 @@ import { env } from 'hono/adapter'
 import { AttentionBox, Container } from './components/box'
 import { PremiumPage } from './page/ai/premium'
 import { PremiumRequiredPage } from './page/ai/premium-required'
+import OpenAI from 'openai'
+import { streamText } from 'hono/streaming'
 
 const app = new Hono()
 
@@ -118,6 +120,26 @@ app.get('/ai/premium', async (c) => {
 app.get('/ai/premium-required', async (c) => {
   return c.render(<PremiumRequiredPage />)
 })
+
+app.get('/ai/premium/openai', async (c) => {
+  const { OPENAI_API_KEY } = env<{ OPENAI_API_KEY: string }>(c)
+  const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { "role": "system", "content": "You are a helpful Japanese assistant." },
+      { "role": "user", "content": "Hello!" }
+    ],
+    stream: true,
+  });
+
+  return streamText(c, async (stream) => {
+    for await (const chunk of completion) {
+      await stream.write(chunk.choices[0]?.delta.content ?? '')
+    }
+  })
+  }
+)
 
 app.get('/ai/limited', (c) => {
   return c.html(
