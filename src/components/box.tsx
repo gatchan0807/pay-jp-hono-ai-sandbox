@@ -1,6 +1,6 @@
-export function Container({ children }: { children?: any }) {
+export function Container({ children, gap = 0 }: { gap?: number, children?: any }) {
     return (
-        <div class="mx-auto w-10/12 mt-4">
+        <div class={`container mx-auto w-10/12 mt-4 flex flex-col gap-${gap}`}>
             {children}
         </div>
     )
