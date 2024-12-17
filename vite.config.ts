@@ -11,9 +11,19 @@ export default defineConfig(({ mode }) => {
       },
       build: {
         rollupOptions: {
-          input: './src/csr/page/ai.tsx',
+          input: {
+            ai: './src/csr/page/ai.tsx',
+            another: './src/csr/page/ai-premium.tsx'
+          },
           output: {
-            entryFileNames: 'static/ai/limited.js'
+            entryFileNames: (chunkInfo) => {
+              if (chunkInfo.name === 'ai') {
+                return 'static/ai/limited.js'
+              } else if (chunkInfo.name === 'ai-premium') {
+                return 'static/ai/premium.js'
+              }
+              return 'static/[name]/limited.js'
+            }
           }
         }
       }

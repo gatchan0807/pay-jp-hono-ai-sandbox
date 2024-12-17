@@ -9,10 +9,10 @@ import { ConfirmedPage } from './page/subscription/confirmed'
 import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
 import { AttentionBox, Container } from './components/box'
-import { PremiumPage } from './page/ai/premium'
 import { PremiumRequiredPage } from './page/ai/premium-required'
 import OpenAI from 'openai'
-import { streamText } from 'hono/streaming'
+import { streamSSE } from 'hono/streaming'
+import { OpenAIPremiumPrompt } from './prompts/openai'
 
 const app = new Hono()
 
@@ -114,26 +114,60 @@ app.get('/ai/premium', async (c) => {
     return c.redirect('/ai/premium-required')
   }
 
-  return c.render(<PremiumPage />)
+  return c.html(
+    <html>
+      <head>
+        <meta charSet="utf-8" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        {import.meta.env.PROD ? (
+          <script type="module" src="/static/ai/premium.js"></script>
+        ) : (
+          <script type="module" src="/src/csr/page/ai-premium.tsx"></script>
+        )}
+      </head>
+      <body>
+        <div id="client-ai-page"></div>
+      </body>
+    </html>
+  )
 })
 
 app.get('/ai/premium-required', async (c) => {
   return c.render(<PremiumRequiredPage />)
 })
 
-app.get('/ai/premium/openai', async (c) => {
+const openaiRoute = app.get('/ai/premium/openai', async (c) => {
+  const { credentials, error: credentialError } = useCredentials(c)
+  if (credentialError) {
+    return credentialError
+  }
+
+  const { COOKIE_SECRET } = env<{ COOKIE_SECRET: string }>(c)
+  const subscriptionId = await getSignedCookie(c, COOKIE_SECRET, 'subscription_id') ?? '' // todo: 'secure' をつける
+
+  if (!subscriptionId) {
+    return c.json({ error: 'subscription_id is not found' }, 400)
+  }
+
+  const { subscription, error } = await getSubscription(credentials, subscriptionId)
+  if (error) {
+    return c.json({ error: 'subscription fetch failed' }, 500)
+  }
+
+  if ("error" in subscription) {
+    return c.json({ error: 'subscription fetch failed' }, 500)
+  }
+
   const { OPENAI_API_KEY } = env<{ OPENAI_API_KEY: string }>(c)
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
-    messages: [
-      { "role": "system", "content": "You are a helpful Japanese assistant." },
-      { "role": "user", "content": "Hello!" }
-    ],
+    messages: OpenAIPremiumPrompt(),
     stream: true,
   });
 
-  return streamText(c, async (stream) => {
+  return streamSSE(c, async (stream) => {
     for await (const chunk of completion) {
       await stream.write(chunk.choices[0]?.delta.content ?? '')
     }
@@ -162,3 +196,4 @@ app.get('/ai/limited', (c) => {
 })
 
 export default app
+export type OpenAIAppType = typeof openaiRoute
