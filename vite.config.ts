@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       },
       build: {
         rollupOptions: {
-          input: './src/clients/page/ai.tsx',
+          input: './src/csr/page/ai.tsx',
           output: {
             entryFileNames: 'static/ai/limited.js'
           }

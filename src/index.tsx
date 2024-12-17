@@ -129,7 +129,7 @@ app.get('/ai/limited', (c) => {
         {import.meta.env.PROD ? (
           <script type="module" src="/static/ai/limited.js"></script>
         ) : (
-          <script type="module" src="/src/clients/page/ai.tsx"></script>
+          <script type="module" src="/src/csr/page/ai.tsx"></script>
         )}
       </head>
       <body>
