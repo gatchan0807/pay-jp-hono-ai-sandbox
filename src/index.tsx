@@ -4,11 +4,13 @@ import { renderer } from './renderer'
 import { TopPage } from './page/top'
 import { useCredentials } from './hooks/useCredentials'
 import { usePayJpCardToken } from './hooks/usePayJpCardToken'
-import { cancelSubscription, createCustomer, createSubscription } from './hooks/fetchPayJp'
+import { cancelSubscription, createCustomer, createSubscription, getSubscription } from './hooks/fetchPayJp'
 import { ConfirmedPage } from './page/subscription/confirmed'
 import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
 import { AttentionBox, Container } from './components/box'
+import { PremiumPage } from './page/ai/premium'
+import { PremiumRequiredPage } from './page/ai/premium-required'
 
 const app = new Hono()
 
@@ -85,6 +87,36 @@ app.get('/payment/cancel', async (c) => {
   deleteCookie(c, 'plan_id')
 
   return c.redirect('/')
+})
+
+app.get('/ai/premium', async (c) => {
+  // TODO: リダイレクトをするかの判定処理はミドルウェアにまとめたい
+  const { credentials, error: credentialError } = useCredentials(c)
+  if (credentialError) {
+    return credentialError
+  }
+
+  const { COOKIE_SECRET } = env<{ COOKIE_SECRET: string }>(c)
+  const subscriptionId = await getSignedCookie(c, COOKIE_SECRET, 'subscription_id') ?? '' // todo: 'secure' をつける
+
+  if (!subscriptionId) {
+    return c.redirect('/ai/premium-required')
+  }
+
+  const { subscription, error } = await getSubscription(credentials, subscriptionId)
+  if (error) {
+    return c.redirect('/ai/premium-required')
+  }
+
+  if ("error" in subscription) {
+    return c.redirect('/ai/premium-required')
+  }
+
+  return c.render(<PremiumPage />)
+})
+
+app.get('/ai/premium-required', async (c) => {
+  return c.render(<PremiumRequiredPage />)
 })
 
 app.get('/ai/limited', (c) => {
