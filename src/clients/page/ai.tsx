@@ -1,9 +1,13 @@
-import { render } from 'hono/jsx/dom'
+import { render, useState } from 'hono/jsx/dom'
 import { AttentionBox, Container } from '../../components/box';
 import { Footer } from '../../components/footer';
 import { Title } from '../../components/text';
 import { AILanguageModelFactory, useLanguageModel } from '../hooks/useLanguageModels';
 import { useLanguageModelStatus } from '../hooks/useLanguageModelStatus';
+import rehypeStringify from 'rehype-stringify';
+import remarkRehype from 'remark-rehype';
+import remarkParse from 'remark-parse';
+import { unified } from 'unified';
 
 export function ClientAiPage() {
     const languageModel = useLanguageModel();
@@ -29,9 +33,100 @@ export function ClientAiPage() {
 }
 
 function UsableLimitedAi({ languageModel, languageModelStatus }: { languageModel: AILanguageModelFactory | null, languageModelStatus: string }) {
+    const [generatedText, setGeneratedText] = useState<string>("")
+    const [isGenerating, setIsGenerating] = useState<boolean>(false)
+
+    const handler = async () => {
+        try {
+            setIsGenerating(true)
+            const session = await languageModel?.create();
+            if (session === undefined) {
+                setIsGenerating(false)
+                return
+            }
+
+            const prompt = `
+Output only in English.
+
+# Task: Generate Dinner Ideas
+
+Create a list of 5 popular cooking names with descriptions for dinner ideas that can be easily made at home for Japanese, Korean, Chinese, American, French.
+Use the following Markdown format for each item. Output should be a valid Markdown list. Each list element should have a name and a description.
+
+## Output format
+
+- Cooking name: **(Display as is)**
+  - Description: (Provide a clear description in English)\\n
+
+## Example of item
+
+- Cooking name: **Delicious Chicken Stir-fry**
+  - Description: A quick and easy stir-fry with chicken and your favorite vegetables.
+- Cooking name: **Delicious Chicken Stir-fry**
+  - Description: A quick and easy stir-fry with chicken and your favorite vegetables.
+`
+
+            const result = await session.prompt(prompt)
+
+            if ('translation' in self) {
+                const html = await unified()
+                    .use(remarkParse)
+                    .use(remarkRehype)
+                    .use(rehypeStringify)
+                    .process(result);
+                console.log(String(html));
+
+                // @ts-expect-error - AI object is usable only in the already setting completed Chrome
+                const translator = await self.translation.createTranslator({
+                    sourceLanguage: 'en',
+                    targetLanguage: 'ja',
+                });
+
+                const translated = await translator.translate(String(html))
+                console.log(translated);
+
+                setGeneratedText(String(translated));
+            }
+
+
+            setIsGenerating(false)
+        } catch (e) {
+            setGeneratedText(`生成中にエラーが発生しました`)
+        } finally {
+            setIsGenerating(false)
+        }
+    }
+
+
     return (
-        <div class="p-4 border-2 border-blue-600 shadow-lg shadow-blue-500/30 rounded">
-            <p>Can I use on-chrome LLM?: {JSON.stringify(languageModelStatus)}</p>
+        <div class="flex flex-col gap-4 p-4 border-2 border-blue-600 shadow-lg shadow-blue-500/30 rounded">
+            <h2 class="text-lg font-bold">今日の晩ごはんの献立候補を考えてもらう</h2>
+            
+            <AttentionBox type="sub">
+                <p>この機能は、ブラウザに搭載されたAIを使って実装されています。</p>
+                <p>一般的な生成AI（LLM）に比べるとかなり精度が低い点について、ご容赦ください。</p>
+                <p>また、一度英語で出力されたAIの生成結果を日本語に翻訳して表示します。</p>
+                <p>翻訳結果は、出力元の文脈によっては意味が変わることがありますので、ご注意ください。</p>
+            </AttentionBox>
+
+            <button
+                onClick={() => handler()}
+                class="p-4 bg-blue-600 hover:bg-blue-500 text-white rounded"
+            >
+                AIに考えてもらう
+            </button>
+            {isGenerating ? <Generating /> : (<div class="p-4 bg-slate-100 rounded">
+                {generatedText === "" ? <p class="text-center">ここに生成結果が表示されます</p> :
+                    <div dangerouslySetInnerHTML={{ __html: generatedText }}></div>}
+            </div>)}
+        </div>
+    )
+}
+
+function Generating() {
+    return (
+        <div class="p-4 bg-slate-100 rounded text-center">
+            <p>検討中...</p>
         </div>
     )
 }
