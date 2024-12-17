@@ -11,7 +11,7 @@ export type ErrorObject = {
 
 export function ClientError(ctx: Context<BlankEnv, string, BlankInput>, error: ErrorObject) {
     return ctx.render(
-        <Container>
+        <Container gap={4}>
             <Title text={`Client Error [ ${error.code} ]`} />
             <ErrorMessageBox message={error.message} />
             <Footer />
@@ -21,7 +21,7 @@ export function ClientError(ctx: Context<BlankEnv, string, BlankInput>, error: E
 
 export function ServerError(ctx: Context<BlankEnv, string, BlankInput>, error: ErrorObject) {
     return ctx.render(
-        <Container>
+        <Container gap={4}>
             <Title text={`Server Error [ ${error.code} ]`} />
             <ErrorMessageBox message={error.message} />
             <Footer />

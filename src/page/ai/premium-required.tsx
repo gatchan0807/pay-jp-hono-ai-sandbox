@@ -4,16 +4,16 @@ import { Title } from '../../components/text';
 
 export function PremiumRequiredPage() {
     return (
-        <Container gap={2}>
+        <Container gap={4}>
             <Title text="プレミアムAI機能" />
 
             <AttentionBox type="error" >
                 <p>プレミアムAI機能を利用するには、サブスクリプション登録が必要です。</p>
                 <p>サブスクリプション登録がまだの方は、下記のページから登録をお願いします。</p>
+                <p class="mt-4">
+                    <a href="/" class="underline">サブスクリプション登録</a>
+                </p>
             </AttentionBox>
-            <div class="w-full flex justify-center">
-                <a href="/" class="p-4 bg-cyan-100 hover:bg-cyan-200 rounded">サブスクリプション登録</a>
-            </div>
 
             <Footer />
         </Container>

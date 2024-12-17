@@ -1,8 +1,8 @@
 export function Footer() {
     return (
         <footer class="pl-8 py-4 w-full bg-slate-100">
-            <p>ページ一覧</p>
-            <ul >
+            <p class="mb-1">ページ一覧</p>
+            <ul class="list-disc pl-4 flex flex-col gap-1">
                 <li>
                     <a href="/" class="underline text-teal-600 hover:text-teal-500">TOP</a>
                 </li>

@@ -6,10 +6,8 @@ export function PremiumPage() {
 
     
     return (
-        <Container>
+        <Container gap={4}>
             <Title text="プレミアムAI機能" />
-
-
             <Footer />
         </Container>
     )
