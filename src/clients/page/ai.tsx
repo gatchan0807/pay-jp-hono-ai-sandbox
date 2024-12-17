@@ -101,7 +101,7 @@ Use the following Markdown format for each item. Output should be a valid Markdo
     return (
         <div class="flex flex-col gap-4 p-4 border-2 border-blue-600 shadow-lg shadow-blue-500/30 rounded">
             <h2 class="text-lg font-bold">今日の晩ごはんの献立候補を考えてもらう</h2>
-            
+
             <AttentionBox type="sub">
                 <p>この機能は、ブラウザに搭載されたAIを使って実装されています。</p>
                 <p>一般的な生成AI（LLM）に比べるとかなり精度が低い点について、ご容赦ください。</p>
@@ -111,7 +111,7 @@ Use the following Markdown format for each item. Output should be a valid Markdo
 
             <button
                 onClick={() => handler()}
-                class="p-4 bg-blue-600 hover:bg-blue-500 text-white rounded"
+                class="p-4 bg-blue-600 hover:bg-blue-500 text-white rounded shadow-lg shadow-blue-500/30"
             >
                 AIに考えてもらう
             </button>
@@ -126,15 +126,27 @@ Use the following Markdown format for each item. Output should be a valid Markdo
 function Generating() {
     return (
         <div class="p-4 bg-slate-100 rounded text-center">
-            <p>検討中...</p>
+            <p class="text-blue-400 font-bold">検討中...</p>
         </div>
     )
 }
 
 function NoUsableLimitedAi() {
-    return <>
-
-    </>
+    return <div class="p-4 border-2 border-red-600 bg-red-50 text-red-700 shadow-lg shadow-red-500/30 rounded">
+        <p>この機能は、Chrome組み込みのAIを利用した機能であるため、最新版のChrome（Windows / macOS / Linux用）でのみ利用可能です。</p>
+        <p>また、Chromeの実験的機能をONにする必要があります。詳しくは以下のページの手順を参考にしてください。</p>
+        <ul class="list-disc list-inside">
+            <li class="mt-4 underline">
+                <a href="https://qiita.com/pitao/items/f1355b8002e360f83c93#%E8%A8%AD%E5%AE%9A%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96" target="_blank" rel="noreferrer">Chromeの実験的機能をONにする方法</a>
+            </li>
+            <li class="mt-4 underline">
+                <a href="https://www.docswell.com/s/gatchan0807/ZN1V6G-2024-11-23-110000" target="_blank" rel="noreferrer">Chrome組み込みのAIとは</a>
+            </li>
+            <li class="mt-4 underline">
+                <a href="https://developer.chrome.com/docs/ai?hl=ja" target="_blank" rel="noreferrer">Chrome組み込みのAIとは（公式Docs）</a>
+            </li>
+        </ul>
+    </div>
 }
 
 const root = document.getElementById('client-ai-page')!
