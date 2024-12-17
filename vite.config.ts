@@ -13,13 +13,13 @@ export default defineConfig(({ mode }) => {
         rollupOptions: {
           input: {
             ai: './src/csr/page/ai.tsx',
-            another: './src/csr/page/ai-premium.tsx'
+            aiPremium: './src/csr/page/ai-premium.tsx'
           },
           output: {
             entryFileNames: (chunkInfo) => {
               if (chunkInfo.name === 'ai') {
                 return 'static/ai/limited.js'
-              } else if (chunkInfo.name === 'ai-premium') {
+              } else if (chunkInfo.name === 'aiPremium') {
                 return 'static/ai/premium.js'
               }
               return 'static/[name]/limited.js'
