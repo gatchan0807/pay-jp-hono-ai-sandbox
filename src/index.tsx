@@ -5,15 +5,16 @@ import { useCredentials } from './hooks/useCredentials'
 import { getSubscription } from './hooks/fetchPayJp'
 import { getSignedCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
-import { PremiumRequiredPage } from './pages/ai/premium-required'
 import OpenAI from 'openai'
 import { streamSSE } from 'hono/streaming'
 import { OpenAIPremiumPrompt } from './prompts/openai'
-import { RenderingClientComponent } from './csr/utils/client-component'
 
 import { TopHandler } from './routes/top'
 import { PaymentHandler } from './routes/payment'
 import { PaymentCancelHandler } from './routes/payment/cancel'
+import { AiPremiumRequiredHandler } from './routes/ai/premium-required'
+import { AiPremiumHandler } from './routes/ai/premium'
+import { AiLimitedHandler } from './routes/ai/limited'
 
 const app = new Hono()
 
@@ -22,11 +23,9 @@ app.use(renderer)
 app.get('/', TopHandler)
 app.post('/payment', PaymentHandler)
 app.get('/payment/cancel', PaymentCancelHandler)
-
-
-app.get('/ai/premium-required', async (c) => {
-  return c.render(<PremiumRequiredPage />)
-})
+app.get('/ai/premium-required', AiPremiumRequiredHandler)
+app.get('/ai/premium', AiPremiumHandler) // CSR
+app.get('/ai/limited', AiLimitedHandler) // CSR
 
 const openaiRoute = app.get('/ai/premium/openai', async (c) => {
   const { credentials, error: credentialError } = useCredentials(c)
@@ -66,38 +65,5 @@ const openaiRoute = app.get('/ai/premium/openai', async (c) => {
 })
 // note: CSRされたコンポーネントのfetchをRPCでサポートするためにエクスポートしている
 export type OpenAIAppType = typeof openaiRoute
-
-
-// --- CSR ---
-app.get('/ai/premium', async (c) => {
-  // TODO: リダイレクトをするかの判定処理はミドルウェアにまとめたい
-  const { credentials, error: credentialError } = useCredentials(c)
-  if (credentialError) {
-    return credentialError
-  }
-
-  const { COOKIE_SECRET } = env<{ COOKIE_SECRET: string }>(c)
-  const subscriptionId = await getSignedCookie(c, COOKIE_SECRET, 'subscription_id') ?? '' // todo: 'secure' をつける
-
-  if (!subscriptionId) {
-    return c.redirect('/ai/premium-required')
-  }
-
-  const { subscription, error } = await getSubscription(credentials, subscriptionId)
-  if (error) {
-    return c.redirect('/ai/premium-required')
-  }
-
-  if ("error" in subscription) {
-    return c.redirect('/ai/premium-required')
-  }
-
-  return RenderingClientComponent(c, { dev: "/src/csr/pages/ai-premium.tsx", prd: "/static/ai/premium.js" })
-})
-
-
-app.get('/ai/limited', (c) => {
-  return RenderingClientComponent(c, { dev: "/src/csr/pages/ai.tsx", prd: "/static/ai/limited.js" })
-})
 
 export default app
