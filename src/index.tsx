@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
 
 import { renderer } from './renderer'
-import { TopPage } from './pages/top'
 import { useCredentials } from './hooks/useCredentials'
 import { usePayJpCardToken } from './hooks/usePayJpCardToken'
 import { cancelSubscription, createCustomer, createSubscription, getSubscription } from './hooks/fetchPayJp'
@@ -16,23 +15,13 @@ import { OpenAIPremiumPrompt } from './prompts/openai'
 import { Container } from './components/layout'
 import { RenderingClientComponent } from './csr/utils/client-component'
 
+import { TopHandler } from './routes/top'
+
 const app = new Hono()
 
 app.use(renderer)
 
-app.get('/', async (c) => {
-  const { credentials, error: credentialError } = useCredentials(c)
-  if (credentialError) {
-    return credentialError
-  }
-
-  const { COOKIE_SECRET } = env<{ COOKIE_SECRET: string }>(c)
-  const customerId = await getSignedCookie(c, COOKIE_SECRET, 'customer_id') ?? '' // todo: 'secure' をつける
-  const subscriptionId = await getSignedCookie(c, COOKIE_SECRET, 'subscription_id') ?? '' // todo: 'secure' をつける
-  const planId = await getSignedCookie(c, COOKIE_SECRET, 'plan_id') ?? '' // todo: 'secure' をつける
-
-  return c.render(<TopPage cookie={{ customerId, subscriptionId, planId }} credentials={credentials} />)
-})
+app.get('/', TopHandler)
 
 app.post('/payment', async (c) => {
   const { credentials, error: credentialError } = useCredentials(c)
