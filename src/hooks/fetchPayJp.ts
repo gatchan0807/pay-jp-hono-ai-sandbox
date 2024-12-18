@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { BlankEnv, BlankInput } from "hono/types";
 import { CustomerResponse, ErrorResponse, SubscriptionResponse } from "../types/payjp";
-import { ClientError, ServerError } from "../page/error";
+import { ClientError, ServerError } from "../pages/error";
 
 export async function createCustomer(
     ctx: Context<BlankEnv, string, BlankInput>,

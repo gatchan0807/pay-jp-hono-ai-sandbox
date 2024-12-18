@@ -1,7 +1,7 @@
 import { env } from "hono/adapter"
 import { Context } from "hono"
 import { BlankEnv, BlankInput } from "hono/types"
-import { ServerError } from "../page/error"
+import { ServerError } from "../pages/error"
 
 export function useCredentials(ctx: Context<BlankEnv, string, BlankInput>) {
     const { PAYJP_SECRET_KEY } = env<{ PAYJP_SECRET_KEY: string }>(ctx)

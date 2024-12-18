@@ -1,4 +1,4 @@
-import { Cookie } from "../page/top"
+import { Cookie } from "../pages/top"
 import { getSubscription } from "./fetchPayJp"
 
 

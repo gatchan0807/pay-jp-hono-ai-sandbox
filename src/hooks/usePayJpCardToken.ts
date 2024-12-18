@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { BlankEnv, BlankInput } from "hono/types";
-import { ClientError } from "../page/error";
+import { ClientError } from "../pages/error";
 
 export async function usePayJpCardToken(ctx: Context<BlankEnv, string, BlankInput>) {
     const body = await ctx.req.parseBody()
