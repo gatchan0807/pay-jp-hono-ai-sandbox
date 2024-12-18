@@ -14,6 +14,7 @@ import OpenAI from 'openai'
 import { streamSSE } from 'hono/streaming'
 import { OpenAIPremiumPrompt } from './prompts/openai'
 import { Container } from './components/layout'
+import { RenderingClientComponent } from './csr/utils/client-component'
 
 const app = new Hono()
 
@@ -132,11 +133,12 @@ const openaiRoute = app.get('/ai/premium/openai', async (c) => {
       await stream.write(chunk.choices[0]?.delta.content ?? '')
     }
   })
-  }
-)
+})
+// note: CSRされたコンポーネントのfetchをRPCでサポートするためにエクスポートしている
+export type OpenAIAppType = typeof openaiRoute
 
-// for CSR
 
+// --- CSR ---
 app.get('/ai/premium', async (c) => {
   // TODO: リダイレクトをするかの判定処理はミドルウェアにまとめたい
   const { credentials, error: credentialError } = useCredentials(c)
@@ -160,45 +162,12 @@ app.get('/ai/premium', async (c) => {
     return c.redirect('/ai/premium-required')
   }
 
-  return c.html(
-    <html>
-      <head>
-        <meta charSet="utf-8" />
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        {import.meta.env.PROD ? (
-          <script type="module" src="/static/ai/premium.js"></script>
-        ) : (
-          <script type="module" src="/src/csr/page/ai-premium.tsx"></script>
-        )}
-      </head>
-      <body>
-        <div id="client-ai-page"></div>
-      </body>
-    </html>
-  )
+  return RenderingClientComponent(c, { dev: "/src/csr/pages/ai-premium.tsx", prd: "/static/ai/premium.js" })
 })
 
 
 app.get('/ai/limited', (c) => {
-  return c.html(
-    <html>
-      <head>
-        <meta charSet="utf-8" />
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        {import.meta.env.PROD ? (
-          <script type="module" src="/static/ai/limited.js"></script>
-        ) : (
-          <script type="module" src="/src/csr/page/ai.tsx"></script>
-        )}
-      </head>
-      <body>
-        <div id="client-ai-page"></div>
-      </body>
-    </html>
-  )
+  return RenderingClientComponent(c, { dev: "/src/csr/pages/ai.tsx", prd: "/static/ai/limited.js" })
 })
 
 export default app
-export type OpenAIAppType = typeof openaiRoute
