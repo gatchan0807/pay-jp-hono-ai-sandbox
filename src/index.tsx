@@ -2,10 +2,8 @@ import { Hono } from 'hono'
 
 import { renderer } from './renderer'
 import { useCredentials } from './hooks/useCredentials'
-import { usePayJpCardToken } from './hooks/usePayJpCardToken'
-import { cancelSubscription, createCustomer, createSubscription, getSubscription } from './hooks/fetchPayJp'
-import { ConfirmedPage } from './pages/subscription/confirmed'
-import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie'
+import { cancelSubscription, getSubscription } from './hooks/fetchPayJp'
+import { deleteCookie, getSignedCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
 import { AttentionBox } from './components/box'
 import { PremiumRequiredPage } from './pages/ai/premium-required'
@@ -16,41 +14,14 @@ import { Container } from './components/layout'
 import { RenderingClientComponent } from './csr/utils/client-component'
 
 import { TopHandler } from './routes/top'
+import { PaymentHandler } from './routes/payment'
 
 const app = new Hono()
 
 app.use(renderer)
 
 app.get('/', TopHandler)
-
-app.post('/payment', async (c) => {
-  const { credentials, error: credentialError } = useCredentials(c)
-  if (credentialError) {
-    return credentialError
-  }
-
-  const { token, error: tokenError } = await usePayJpCardToken(c)
-  if (tokenError) {
-    return tokenError
-  }
-
-  const { customer, error: customerFetchError } = await createCustomer(c, credentials, token)
-  if (customerFetchError) {
-    return customerFetchError
-  }
-
-  const { subscription, error: subscriptionFetchError } = await createSubscription(c, credentials, customer.id)
-  if (subscriptionFetchError) {
-    return subscriptionFetchError
-  }
-
-  const { COOKIE_SECRET } = env<{ COOKIE_SECRET: string }>(c)
-  await setSignedCookie(c, 'customer_id', customer.id, COOKIE_SECRET) // todo: prefix: 'secure' をつける
-  await setSignedCookie(c, 'subscription_id', subscription.id, COOKIE_SECRET) // todo: prefix: 'secure' をつける
-  await setSignedCookie(c, 'plan_id', subscription.plan.id, COOKIE_SECRET) // todo: prefix: 'secure' をつける
-
-  return c.render(<ConfirmedPage subscription={subscription} />)
-})
+app.post('/payment', PaymentHandler)
 
 app.get('/payment/cancel', async (c) => {
   const { credentials, error: credentialError } = useCredentials(c)
