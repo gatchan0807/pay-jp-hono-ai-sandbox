@@ -2,19 +2,18 @@ import { Hono } from 'hono'
 
 import { renderer } from './renderer'
 import { useCredentials } from './hooks/useCredentials'
-import { cancelSubscription, getSubscription } from './hooks/fetchPayJp'
-import { deleteCookie, getSignedCookie } from 'hono/cookie'
+import { getSubscription } from './hooks/fetchPayJp'
+import { getSignedCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
-import { AttentionBox } from './components/box'
 import { PremiumRequiredPage } from './pages/ai/premium-required'
 import OpenAI from 'openai'
 import { streamSSE } from 'hono/streaming'
 import { OpenAIPremiumPrompt } from './prompts/openai'
-import { Container } from './components/layout'
 import { RenderingClientComponent } from './csr/utils/client-component'
 
 import { TopHandler } from './routes/top'
 import { PaymentHandler } from './routes/payment'
+import { PaymentCancelHandler } from './routes/payment/cancel'
 
 const app = new Hono()
 
@@ -22,36 +21,7 @@ app.use(renderer)
 
 app.get('/', TopHandler)
 app.post('/payment', PaymentHandler)
-
-app.get('/payment/cancel', async (c) => {
-  const { credentials, error: credentialError } = useCredentials(c)
-  if (credentialError) {
-    return credentialError
-  }
-  const { COOKIE_SECRET } = env<{ COOKIE_SECRET: string }>(c)
-  const subscriptionId = await getSignedCookie(c, COOKIE_SECRET, 'subscription_id') ?? '' // todo: 'secure' をつける
-
-  if (!subscriptionId) {
-    return c.render(<Container><AttentionBox type='error'>サブスクリプションが見つかりませんでした。</AttentionBox></Container>)
-  }
-
-  const { subscription, error } = await cancelSubscription(credentials, subscriptionId)
-  if (error) {
-    return c.render(<Container><AttentionBox type='error'>サブスクリプションのキャンセルに失敗しました。</AttentionBox></Container>)
-  }
-
-  if ("error" in subscription) {
-    return c.render(<Container><AttentionBox type='error'>サブスクリプションのキャンセルに失敗しました。</AttentionBox></Container>)
-  }
-
-  console.log("subscription canceled: ", subscription.id, 'plan:', subscription.plan.id, 'customer:', subscription.customer);
-
-  deleteCookie(c, 'customer_id')
-  deleteCookie(c, 'subscription_id')
-  deleteCookie(c, 'plan_id')
-
-  return c.redirect('/')
-})
+app.get('/payment/cancel', PaymentCancelHandler)
 
 
 app.get('/ai/premium-required', async (c) => {
