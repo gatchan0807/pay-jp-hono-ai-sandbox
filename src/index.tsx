@@ -8,11 +8,12 @@ import { cancelSubscription, createCustomer, createSubscription, getSubscription
 import { ConfirmedPage } from './page/subscription/confirmed'
 import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie'
 import { env } from 'hono/adapter'
-import { AttentionBox, Container } from './components/box'
+import { AttentionBox } from './components/box'
 import { PremiumRequiredPage } from './page/ai/premium-required'
 import OpenAI from 'openai'
 import { streamSSE } from 'hono/streaming'
 import { OpenAIPremiumPrompt } from './prompts/openai'
+import { Container } from './components/layout'
 
 const app = new Hono()
 
