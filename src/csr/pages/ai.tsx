@@ -8,6 +8,7 @@ import remarkRehype from 'remark-rehype';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { Layout, Container } from '../../components/layout';
+import { GeminiNanoInChromePrompt } from '../../prompts/gemini-nano-in-chrome';
 
 export function ClientAiPage() {
     const languageModel = useLanguageModel();
@@ -33,7 +34,7 @@ export function ClientAiPage() {
     )
 }
 
-function UsableLimitedAi({ languageModel, languageModelStatus }: { languageModel: AILanguageModelFactory | null, languageModelStatus: string }) {
+function UsableLimitedAi({ languageModel }: { languageModel: AILanguageModelFactory | null, languageModelStatus: string }) {
     const [generatedText, setGeneratedText] = useState<string>("")
     const [isGenerating, setIsGenerating] = useState<boolean>(false)
 
@@ -46,28 +47,8 @@ function UsableLimitedAi({ languageModel, languageModelStatus }: { languageModel
                 return
             }
 
-            const prompt = `
-Output only in English.
-
-# Task: Generate Dinner Ideas
-
-Create a list of 5 popular cooking names with descriptions for dinner ideas that can be easily made at home for Japanese, Korean, Chinese, American, French.
-Use the following Markdown format for each item. Output should be a valid Markdown list. Each list element should have a name and a description.
-
-## Output format
-
-- Cooking name: **(Display as is)**
-  - Description: (Provide a clear description in English)\\n
-
-## Example of item
-
-- Cooking name: **Delicious Chicken Stir-fry**
-  - Description: A quick and easy stir-fry with chicken and your favorite vegetables.
-- Cooking name: **Delicious Chicken Stir-fry**
-  - Description: A quick and easy stir-fry with chicken and your favorite vegetables.
-`
-
-            const result = await session.prompt(prompt)
+            const prompt = GeminiNanoInChromePrompt();
+            const result = await session.prompt(prompt);
 
             if ('translation' in self) {
                 const html = await unified()
@@ -88,8 +69,6 @@ Use the following Markdown format for each item. Output should be a valid Markdo
 
                 setGeneratedText(String(translated));
             }
-
-
             setIsGenerating(false)
         } catch (e) {
             setGeneratedText(`生成中にエラーが発生しました`)
