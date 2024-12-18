@@ -12,8 +12,8 @@ export default defineConfig(({ mode }) => {
       build: {
         rollupOptions: {
           input: {
-            ai: './src/csr/page/ai.tsx',
-            aiPremium: './src/csr/page/ai-premium.tsx'
+            ai: './src/csr/pages/ai.tsx',
+            aiPremium: './src/csr/pages/ai-premium.tsx'
           },
           output: {
             entryFileNames: (chunkInfo) => {
