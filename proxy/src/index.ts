@@ -1,23 +1,25 @@
 import { Hono } from 'hono'
 import { env } from 'hono/adapter'
+import { EventDivider, EventType, PayJpEvent } from './event-divider'
 
 const app = new Hono()
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
+  return c.json({ status: 'ok', message: 'Server is running.' })
 })
 
 app.post('/webhook', async (c) => {
-  const body = await c.req.json()
-  const payjpToken = c.req.header('X-Payjp-Webhook-Token')
+  const body = await c.req.json() as PayJpEvent
+  const payjpWebhookToken = c.req.header('X-Payjp-Webhook-Token')
 
   const storedToken = env<{ PAYJP_WEBHOOK_TOKEN: string }>(c)
 
-  if (payjpToken !== storedToken.PAYJP_WEBHOOK_TOKEN) {
-    console.log('Invalid token', payjpToken);
+  if (payjpWebhookToken !== storedToken.PAYJP_WEBHOOK_TOKEN) {
+    console.log('Invalid token: ', payjpWebhookToken);
     return c.json({ error: 'Invalid token' }, { status: 401 })
   }
-  console.log(body);
+
+  EventDivider(body.type as EventType, body.data)
 
   return c.json(body)
 })
