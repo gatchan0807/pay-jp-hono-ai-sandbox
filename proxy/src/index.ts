@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { env } from 'hono/adapter'
-import { EventDivider, EventType, PayJpEvent } from './event-divider'
+import { EventDivider } from './event-divider'
+import { PayJpEvent, EventType } from './types'
 
 const app = new Hono()
 
