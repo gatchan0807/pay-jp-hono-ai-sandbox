@@ -1,0 +1,40 @@
+POST http://localhost:8787/webhook HTTP/1.1
+Content-Type: application/json
+X-Payjp-Webhook-Token: whook_1234567890abcdef
+
+{
+  "data": {
+    "plan": {
+      "metadata": {},
+      "livemode": false,
+      "id": "test-gatchan-ai-premium",
+      "name": "がっちゃんAIのプレミアムプラン",
+      "object": "plan",
+      "currency": "jpy",
+      "interval": "month",
+      "amount": 500,
+      "created": 1733922919,
+      "trial_days": 14,
+      "billing_day": 25
+    },
+    "metadata": {},
+    "prorate": false,
+    "livemode": false,
+    "id": "sub_5ebb1415082f737da4ac6012f79c",
+    "object": "subscription",
+    "status": "trial",
+    "customer": "cus_bdcfa5b8522e7b18b9ee8d901867",
+    "start": 1735785953,
+    "created": 1735785953,
+    "trial_end": 1736995553,
+    "trial_start": 1735785953,
+    "current_period_end": 1736995553,
+    "current_period_start": 1735785953
+  },
+  "livemode": false,
+  "object": "event",
+  "id": "evnt_036ba14e2a489c84af887e7ce83",
+  "type": "subscription.created",
+  "pending_webhooks": 1,
+  "created": 1735785953
+}
