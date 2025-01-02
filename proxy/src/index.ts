@@ -14,8 +14,10 @@ app.post('/webhook', async (c) => {
   const storedToken = env<{ PAYJP_WEBHOOK_TOKEN: string }>(c)
 
   if (payjpToken !== storedToken.PAYJP_WEBHOOK_TOKEN) {
+    console.log('Invalid token', payjpToken);
     return c.json({ error: 'Invalid token' }, { status: 401 })
   }
+  console.log(body);
 
   return c.json(body)
 })
