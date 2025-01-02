@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { env } from 'hono/adapter'
 import { EventDivider } from './event-divider'
-import { PayJpEvent, EventType } from './types'
+import { PayJpEvent } from './types'
 
 const app = new Hono()
 
@@ -20,7 +20,12 @@ app.post('/webhook', async (c) => {
     return c.json({ error: 'Invalid token' }, { status: 401 })
   }
 
-  EventDivider(body.type as EventType, body.data)
+  try {
+    EventDivider(body.type, body.data)
+  } catch (e) {
+    console.error('Error in EventDivider', e)
+    return c.json({ error: 'Error in EventDivider' }, { status: 500 })
+  }
 
   return c.json(body)
 })
