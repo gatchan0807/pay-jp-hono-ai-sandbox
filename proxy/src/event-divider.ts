@@ -7,20 +7,20 @@ import { fetchSubscriptionRenewed } from "./internal-api-client"
 export async function EventDivider(event: EventType, data: unknown, ctx: Context<BlankEnv, string, BlankInput>) {
     switch (event) {
         case "subscription.created":
-            console.log("Subscription created", data)
+            console.info("[INFO] EventDivider: Subscription created: ", data)
             break
         case "subscription.renewed":
-            console.log("Subscription renewed", data)
+            console.info("[INFO] EventDivider: Subscription renewed: ", data)
             await fetchSubscriptionRenewed(data, ctx)
             break
         case "charge.succeeded":
-            console.log("Charge succeeded", data)
+            console.info("[INFO] EventDivider: Charge succeeded: ", data)
             break
         case "charge.failed":
-            console.log("Charge failed", data)
+            console.info("[INFO] EventDivider: Charge failed: ", data)
             break
         default:
-            console.log("Unknown event", event, data)
+            console.warn("[WARN] EventDivider: Unknown event: ", event, data)
             break
     }
 }

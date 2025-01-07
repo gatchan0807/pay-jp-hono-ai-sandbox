@@ -13,5 +13,5 @@ export async function fetchSubscriptionRenewed(data: unknown, ctx: Context<Blank
         body: JSON.stringify({ data }),
     })
     console.info("[INFO] Subscription Renewed API response");
-    console.info(await res.json());
+    console.info("[INFO] Response: ", await res.json());
 }
