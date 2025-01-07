@@ -16,7 +16,7 @@ export function ClientPremiumAiPage() {
 
     const handler = async () => {
         const client = hc<OpenAIAppType>('/')
-        const result = await client.ai.premium.openai.$get()
+        const result = await client.api.ai.premium.openai.$get()
 
         const data = result.body;
 
