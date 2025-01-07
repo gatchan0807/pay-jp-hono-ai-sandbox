@@ -3,8 +3,8 @@ Content-Type: application/json
 X-Payjp-Webhook-Token: whook_1234567890abcdef
 
 {
-  "type": "subscription.created",
-  "description": "定期課金が作成されました",
+  "type": "subscription.renewed",
+  "description": "定期課金の期間が更新されました",
   "livemode": false,
   "object": "event",
   "id": "evnt_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -23,23 +23,23 @@ X-Payjp-Webhook-Token: whook_1234567890abcdef
           "trial_days": 14,
           "billing_day": 25
       },
-      "start": 1734497414,
+      "start": 1734504396,
       "object": "subscription",
-      "status": "trial",
-      "created": 1734497414,
+      "status": "active",
+      "created": 1734504396,
       "prorate": false,
       "customer": "cus_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
       "livemode": false,
       "metadata": {},
       "paused_at": null,
-      "trial_end": 1735707014,
+      "trial_end": 1735713996,
       "resumed_at": null,
       "canceled_at": null,
-      "trial_start": 1734497414,
+      "trial_start": 1734504396,
       "next_cycle_plan": null,
-      "current_period_end": 1735707014,
-      "current_period_start": 1734497414
+      "current_period_end": 1737763236,
+      "current_period_start": 1735713996
   },
   "pending_webhooks": 0,
-  "created": 1734497414
+  "created": 1735714225
 }
