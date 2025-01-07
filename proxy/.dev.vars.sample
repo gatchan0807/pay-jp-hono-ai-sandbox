@@ -1,1 +1,2 @@
 PAYJP_WEBHOOK_TOKEN="whook_1234567890abcdef"
+APPLICATION_HOST="http://localhost:5173"

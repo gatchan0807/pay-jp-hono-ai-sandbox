@@ -21,7 +21,7 @@ app.post('/webhook', async (c) => {
   }
 
   try {
-    EventDivider(body.type, body.data)
+    await EventDivider(body.type, body.data, c)
   } catch (e) {
     console.error('Error in EventDivider', e)
     return c.json({ error: 'Error in EventDivider' }, { status: 500 })
