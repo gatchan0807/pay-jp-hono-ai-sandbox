@@ -3,6 +3,10 @@ compatibility_date = "2024-12-11"
 pages_build_output_dir = "./dist"
 compatibility_flags = [ "nodejs_compat" ]
 
+[[d1_databases]]
+binding = "DB"
+database_name = "pay-jp-hono-ai-sandbox"
+database_id = "643801af-9b8e-4a25-9f2f-651e34e46cd3"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
