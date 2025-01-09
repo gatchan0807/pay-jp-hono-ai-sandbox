@@ -2,7 +2,7 @@ import { Context } from "hono"
 import { BlankEnv, BlankInput } from "hono/types"
 
 import { EventType } from "./types"
-import { fetchSubscriptionRenewed } from "./internal-api-client"
+import { fetchChargeSuccess, fetchSubscriptionRenewed } from "./internal-api-client"
 
 export async function EventDivider(event: EventType, data: unknown, ctx: Context<BlankEnv, string, BlankInput>) {
     switch (event) {
@@ -15,6 +15,7 @@ export async function EventDivider(event: EventType, data: unknown, ctx: Context
             break
         case "charge.succeeded":
             console.info("[INFO] EventDivider: Charge succeeded: ", data)
+            await fetchChargeSuccess(data, ctx)
             break
         case "charge.failed":
             console.info("[INFO] EventDivider: Charge failed: ", data)
