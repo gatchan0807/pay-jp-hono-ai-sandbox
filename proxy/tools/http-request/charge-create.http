@@ -1,0 +1,63 @@
+POST http://localhost:8787/webhook HTTP/1.1
+Content-Type: application/json
+X-Payjp-Webhook-Token: whook_1234567890abcdef
+
+{
+    "pending_webhooks": 0,
+    "created": 1735710052,
+    "type": "charge.succeeded",
+    "description": "支払いが成功しました",
+    "livemode": false,
+    "object": "event",
+    "id": "evnt_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "data": {
+        "id": "ch_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "card": {
+            "id": "car_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "name": "DUMMY USER",
+            "brand": "MasterCard",
+            "email": null,
+            "last4": "4444",
+            "phone": null,
+            "object": "card",
+            "country": null,
+            "created": 1734500374,
+            "customer": "cus_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "exp_year": 2033,
+            "livemode": false,
+            "metadata": {},
+            "cvc_check": "passed",
+            "exp_month": 4,
+            "address_zip": null,
+            "fingerprint": "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "address_city": null,
+            "address_line1": null,
+            "address_line2": null,
+            "address_state": null,
+            "address_zip_check": "unchecked",
+            "three_d_secure_status": null
+        },
+        "paid": true,
+        "amount": 500,
+        "object": "charge",
+        "created": 1735710052,
+        "term_id": "tm_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "captured": true,
+        "currency": "jpy",
+        "customer": "cus_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "fee_rate": "3.30",
+        "livemode": false,
+        "metadata": null,
+        "refunded": false,
+        "expired_at": null,
+        "captured_at": 1735710052,
+        "description": null,
+        "failure_code": null,
+        "subscription": "sub_xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "refund_reason": null,
+        "amount_refunded": 0,
+        "failure_message": null,
+        "three_d_secure_status": null
+    }
+}
+
